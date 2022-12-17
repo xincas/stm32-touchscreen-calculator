@@ -1,0 +1,11 @@
+[Dd]ebug/
+[Rr]elease/
+.metadata/
+.settings/
+RemoteSystemsTempFiles/
+ 
+*.chm
+*.settings.xml
+ 
+*.xml
+*.launch
