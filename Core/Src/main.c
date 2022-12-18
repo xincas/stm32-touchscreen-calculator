@@ -141,14 +141,6 @@ static bool app_open32f3_lvgl_display_touch_sensor_read_cb(
 		touch_flag = 1;
 	}
 
-	// !!! ====================================================================
-	// Определить, имеется ли касание и записать результат во флаг touch_flag
-	// Если касание произошло, то записать его координаты в touch_x и touch_y
-	// ...
-	// Код реализации необходимо взять из лабораторной работы №5
-	// ...
-	// !!! ====================================================================
-
 	// обработка логики устройства ввода в соответствии с LVGL
 	if (touch_flag) {
 		lvgl_data->last_x_position = touch_x;
@@ -169,8 +161,8 @@ static bool app_open32f3_lvgl_display_touch_sensor_read_cb(
 /**
  * Функция инициализации дисплея для LVGL.
  *
- * @param lcd_driver инициализированный драйвер дисплея из 5-й ЛР
- * @param touch_driver инициализированный драйвер touch сенсора из 5-й ЛР
+ * @param lcd_driver инициализированный драйвер дисплея
+ * @param touch_driver инициализированный драйвер touch сенсора
  * @param lvgl_data неинициализированные объект app_open32f3_lvgl_driver_t
  * @return 0 в случае успеха, иначе не нулевое значение
  */
@@ -229,11 +221,7 @@ int app_open32f3_lvgl_init(app_open32f3_lvgl_driver_t *lvgl_data,
 	lvgl_data->last_y_position = 0;
 	lvgl_data->indev_drv.user_data = lvgl_data;
 	lvgl_data->indev_drv.disp = lvgl_data->disp;
-	// !!! ======================================================================
-	// !!! Если вам нужны вспомогательные данные для обработки сенсора дисплея,
-	// !!! запишите их в поле app_touch_data. Если нет, пропустите данную строку
-	// !!! ======================================================================
-	//    lvgl_data->app_touch_data = <ваши данные>;
+	
 	// Регистрация устройства ввода
 	lvgl_data->indev_drv.read_cb =
 			app_open32f3_lvgl_display_touch_sensor_read_cb;
@@ -415,24 +403,24 @@ const char* eval(const char* left, const char* right, e_function fun)
 }
 
 void all_clear(e_function* fun, char **first_arg, char** text_main) {
-	free(*first_arg);
-	free(*text_main);
+	//free(*first_arg);
+	//free(*text_main);
 	lv_textarea_set_text(app_scene.text_main, "");
 	lv_textarea_set_text(app_scene.text_history, "");
 	//(*first_arg) = "";
 	(*fun) = NONE;
 }
 
-void fun_execute(const char* first_arg, const  char* text_on_disp, e_function* fun, e_function current_operation)
+void fun_execute(const char** first_arg, const  char* text_on_disp, e_function* fun, e_function current_operation)
 {
-	if (get_flag(SQ_FUN) && strlen(first_arg) != 0 && strlen(text_on_disp) != 0)
+	if (get_flag(SQ_FUN))
 	{
-		text_on_disp = eval(first_arg, text_on_disp, *fun);
+		text_on_disp = eval(*first_arg, text_on_disp, *fun);
 	}
 	set_flag(SQ_FUN, true);
 	set_flag(SQ_EQ, false);
 	*fun = current_operation;
-	first_arg = save_display(text_on_disp, *fun);
+	*first_arg = save_display(text_on_disp, *fun);
 	lv_textarea_set_text(app_scene.text_main, "");
 }
 
@@ -453,6 +441,12 @@ void memory_operation(const char* text_on_disp, e_function operation)
 			write_mem(read_mem() + atof(text_on_disp));
 		else
 			write_mem(read_mem() - atof(text_on_disp));
+
+		if (float_equal(read_mem(), 0.f, 0.0000001))
+		{
+			lv_label_set_text(app_scene.text_mem, "");
+			set_flag(MEM_SAVE, false);
+		}
 	}
 }
 
@@ -507,85 +501,23 @@ static void keyboard_event_handler(lv_obj_t * obj, lv_event_t event)
         		}
         		break;
         	case 2: // M-
-        		/*if (!get_flag(MEM_SAVE))
-        		{
-        			dsp_value = atof(text_on_disp);
-        			write_mem(-dsp_value);
-        			lv_label_set_text(app_scene.text_mem, "M");
-        			set_flag(MEM_SAVE, true);
-        		}
-        		else
-        		{
-        			mem_value = read_mem();
-        			dsp_value = atof(text_on_disp);
-        			write_mem(mem_value - dsp_value);
-        		}*/
         		memory_operation(text_on_disp, MINUS);
         		break;
         	case 3: // M+
-        		/*if (!get_flag(MEM_SAVE))
-				{
-        			dsp_value = atof(text_on_disp);
-					write_mem(dsp_value);
-					lv_label_set_text(app_scene.text_mem, "M");
-					set_flag(MEM_SAVE, true);
-				}
-				else
-				{
-					mem_value = read_mem();
-					dsp_value = atof(text_on_disp);
-					write_mem(mem_value + dsp_value);
-				}*/
         		memory_operation(text_on_disp, PLUS);
         		break;
 
         	case 7: // +
-        		/*if (get_flag(SQ_FUN) && strlen(first_arg) != 0 && strlen(text_on_disp) != 0)
-        		{
-        			text_on_disp = eval(first_arg, text_on_disp, fun);
-        		}
-        		set_flag(SQ_FUN, true);
-				set_flag(SQ_EQ, false);
-        		fun = PLUS;
-        		first_arg = save_display(text_on_disp, fun);
-        		lv_textarea_set_text(app_scene.text_main, "");*/
-        		fun_execute(first_arg, text_on_disp, &fun, PLUS);
+        		fun_execute(&first_arg, text_on_disp, &fun, PLUS);
         		break;
         	case 11: // -
-        		/*if (get_flag(SQ_FUN) && strlen(first_arg) != 0 && strlen(text_on_disp) != 0)
-				{
-					text_on_disp = eval(first_arg, text_on_disp, fun);
-				}
-				set_flag(SQ_FUN, true);
-				set_flag(SQ_EQ, false);
-        		fun = MINUS;
-        		first_arg = save_display(text_on_disp, fun);
-        		lv_textarea_set_text(app_scene.text_main, "");*/
-        		fun_execute(first_arg, text_on_disp, &fun, MINUS);
+        		fun_execute(&first_arg, text_on_disp, &fun, MINUS);
         		break;
         	case 15: // *
-        		/*if (get_flag(SQ_FUN) && strlen(first_arg) != 0 && strlen(text_on_disp) != 0)
-				{
-					text_on_disp = eval(first_arg, text_on_disp, fun);
-				}
-				set_flag(SQ_FUN, true);
-				set_flag(SQ_EQ, false);
-        		fun = MUL;
-        		first_arg = save_display(text_on_disp, fun);
-        		lv_textarea_set_text(app_scene.text_main, "");*/
-        		fun_execute(first_arg, text_on_disp, &fun, MUL);
+        		fun_execute(&first_arg, text_on_disp, &fun, MUL);
         		break;
         	case 19: // /
-        		/*if (get_flag(SQ_FUN) && strlen(first_arg) != 0 && strlen(text_on_disp) != 0)
-				{
-					text_on_disp = eval(first_arg, text_on_disp, fun);
-				}
-				set_flag(SQ_FUN, true);
-				set_flag(SQ_EQ, false);
-        		fun = DIV;
-        		first_arg = save_display(text_on_disp, fun);
-        		lv_textarea_set_text(app_scene.text_main, "");*/
-        		fun_execute(first_arg, text_on_disp, &fun, DIV);
+        		fun_execute(&first_arg, text_on_disp, &fun, DIV);
         		break;
 
         	case 17: // .
