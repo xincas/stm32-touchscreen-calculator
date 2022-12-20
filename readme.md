@@ -1,7 +1,7 @@
 # Курсовой проект по дисциплине <Программирование встроенных приложений>
 # На тему "Калькулятор" 
 ## [@xincas](https://github.com/xincas) и [@qveex](https://github.com/qveex)
-![](https://github.com/xincas/stm32-touchscreen-calculator/blob/main/1.gif)
+![](https://github.com/xincas/stm32-touchscreen-calculator/blob/main/calc.gif)
 ## [Отчет]()
 ## В программе используется:
 - **STM32F303VCT6**
