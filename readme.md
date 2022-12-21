@@ -2,7 +2,7 @@
 # На тему "Калькулятор" 
 ## [@xincas](https://github.com/xincas) и [@qveex](https://github.com/qveex)
 ![](https://github.com/xincas/stm32-touchscreen-calculator/blob/main/calc.gif)
-## [Отчет]()
+## [Отчет](https://github.com/xincas/stm32-touchscreen-calculator/blob/main/%D0%9F%D0%92%D0%9F_%D0%9A%D0%9F_%D0%97%D0%B8%D0%BD%D0%B0%D1%82%D0%BE%D0%B2_%D0%9D%D0%B5%D1%81%D1%82%D0%B5%D1%80%D0%B5%D0%BD%D0%BA%D0%BE.pdf)
 ## В программе используется:
 - **STM32F303VCT6**
 - **Touch screen ILI9325**
